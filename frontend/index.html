@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <script src="index.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="container">
+        <div id="nav-side">
+            <a onclick="loadPagePersonal()">Predict For Personal</a>
+            <a onclick="loadPageDoctor()">Predict For Doctor</a>
+        </div>
+        <div id="content">
+            <form id="myForm" onsubmit="submitForm(event)">
+                <div id="input-sex">
+                    <div>Sex</div>
+                    <label for="male">Male</label>
+                    <input type="radio" id="male" name="sex" value="male">
+            
+                    <label for="female">Female</label>
+                    <input type="radio" id="female" name="sex" value="female">
+                </div>
+                <div id="input-general-health">
+                    <div>General Health</div>
+                    <select id="general-health" name="general-health">
+                        <option value="Poor">Poor</option>
+                        <option value="Excellent">Excellent</option>
+                        <option value="Good">Good</option>
+                        <option value="Fair">Fair</option>
+                        <option value="Very good">Very good</option>
+                    </select>
+                </div>
+                <div id="input-physical-activities">
+                    <div>Physical Activities</div>
+                    <label for="yes">Yes</label>
+                    <input type="radio" id="yes-activities" name="physical-activities" value="yes">
+            
+                    <label for="no">No</label>
+                    <input type="radio" id="no-activities" name="physical-activities" value="no">
+                </div>
+                <div id="input-sleep-hours">
+                    <div>Sleep Hours</div>
+                    <input type="number">
+                </div>
+                <div id="input-difficulty-walking">
+                    <div>Difficulty Walking</div>
+                    <label for="yes">Yes</label>
+                    <input type="radio" id="yes-walking" name="difficulty-walking" value="yes">
+            
+                    <label for="no">No</label>
+                    <input type="radio" id="no-walking" name="difficulty-walking" value="no">
+                </div>
+                <div id="input-smoker-status">
+                    <div>Smoker Status</div>
+                    <select id="smoker" name="smoker">
+                        <option value="Former smoker">Former smoker</option>
+                        <option value="Never smoked">Never smoked</option>
+                        <option value="Current smoker - now smokes every day">Current smoker - now smokes every day</option>
+                    </select>
+                </div>
+                <div id="input-age">
+                    <div>Age</div>
+                    <input type="number">
+                </div>
+                <div id="input-weight">
+                    <div>Weight(Kg)</div>
+                    <input type="number">
+                </div>
+                <div id="input-height">
+                    <div>Height(Cm)</div>
+                    <input type="number">
+                </div>
+                <div id="input-alcohol-drinkers">
+                    <div>Alcohol Drinkers</div>
+                    <label for="yes">Yes</label>
+                    <input type="radio" id="yes-drinkers" name="alcohol-drinkers" value="yes">
+            
+                    <label for="no">No</label>
+                    <input type="radio" id="no-drinkers" name="alcohol-drinkers" value="no">
+                </div>
+                <button type="submit">Submit</button>
+            </form>            
+        </div>
+    </div>
+</body>
+</html>
