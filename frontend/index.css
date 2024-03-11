@@ -15,6 +15,12 @@ body, html{
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
+    transition: transform 0.3s ease; 
+}
+
+#nav-side :hover{
+    transform: scale(1.1);
+    cursor: pointer;
 }
 
 #content{
