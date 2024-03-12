@@ -1,7 +1,7 @@
 function Req(requestData) {
     // Replace 'your_api_endpoint' with the actual API endpoint URL
     const apiUrl = 'http://localhost:8888/predict';
-
+    console.log(JSON.stringify(requestData));
     fetch(apiUrl, {
         method: 'POST', // Change this to 'GET' if it's a GET request
         headers: {
@@ -15,8 +15,7 @@ function Req(requestData) {
         }
         return response.json();
     }).then(data => {
-
-
+        console.log(data)
     }).catch(error => {
         console.error('Fetch error:', error);
     });
