@@ -82,7 +82,7 @@ function submitForm(event) {
         SmokerStatus: document.getElementById('smoker').value,
         AgeCategory: convertAgeToCategory(age),
         Weight: parseInt(document.getElementById('input-weight').querySelector('input').value,10),
-        Height: parseInt(ocument.getElementById('input-height').querySelector('input').value, 10),
+        Height: parseInt(document.getElementById('input-height').querySelector('input').value, 10),
         AlcoholDrinkers: getRadioValue('alcohol-drinkers')
     };
 
@@ -93,12 +93,7 @@ function submitForm(event) {
         }
     }
 
-    // Convert the JavaScript object to a JSON string
-    var jsonData = JSON.stringify(formData);
-
-    console.log('Form Data (JSON):', jsonData);
-
-    Req(jsonData);
+    Req(formData);
 }
 
 function getRadioValue(name) {
