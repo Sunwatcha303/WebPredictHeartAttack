@@ -1,10 +1,19 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sklearn.preprocessing import LabelEncoder,OneHotEncoder
 import pandas as pd
 import joblib
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[""],  # You can specify specific origins instead of ""
+    allow_credentials=True,
+    allow_methods=[""],
+    allow_headers=[""],
+)
 
 @app.get("/")
 async def get_health():
