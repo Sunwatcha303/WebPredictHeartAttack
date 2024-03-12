@@ -9,10 +9,10 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can specify specific origins instead of "*"
+    allow_origins=[""],  # You can specify specific origins instead of ""
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=[""],
+    allow_headers=[""],
 )
 
 @app.get("/")
@@ -22,7 +22,7 @@ async def get_health():
             "message"   : "Good",
         }
 
-model = joblib.load('model.joblib')
+model = joblib.load('backend/model.joblib')
 
 class UserData(BaseModel):
     Sex: str
@@ -105,7 +105,7 @@ def __preprocess_data(data_df):
 
     return data_pre
 
-@app.post("/predict")
+@app.post("/predict", response_model=dict, status_code=200)
 async def predict(data: UserData):
     input_df = pd.DataFrame([data],columns=['Sex','GeneralHealth','PhysicalActivities','SleepHours','DifficultyWalking','SmokerStatus','AgeCategory','Weight','Height','AlcoholDrinkers'])
     print(input_df)
