@@ -23,7 +23,7 @@ function Req(requestData) {
 
 function ReqFile(requestData) {
     // Replace 'your_api_endpoint' with the actual API endpoint URL
-    const apiUrl = 'http://localhost:8888/predict';
+    const apiUrl = 'http://localhost:8888/predict_csv';
 
     // Create a FormData object to send the file
     const formData = new FormData();
