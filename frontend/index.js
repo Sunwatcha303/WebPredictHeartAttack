@@ -71,17 +71,19 @@ function submitForm(event) {
     event.preventDefault();
 
     // Collect form data
+    var age = document.getElementById('input-age').querySelector('input').value;
+
     var formData = {
-        sex: getRadioValue('sex'),
-        generalHealth: document.getElementById('general-health').value,
-        physicalActivities: getRadioValue('physical-activities'),
-        sleepHours: document.getElementById('input-sleep-hours').querySelector('input').value,
-        difficultyWalking: getRadioValue('difficulty-walking'),
-        smokerStatus: document.getElementById('smoker').value,
-        age: document.getElementById('input-age').querySelector('input').value,
-        weight: document.getElementById('input-weight').querySelector('input').value,
-        height: document.getElementById('input-height').querySelector('input').value,
-        alcoholDrinkers: getRadioValue('alcohol-drinkers')
+        Sex: getRadioValue('sex'),
+        GeneralHealth: document.getElementById('general-health').value,
+        PhysicalActivities: getRadioValue('physical-activities'),
+        SleepHours: parseInt(document.getElementById('input-sleep-hours').querySelector('input').value,10),
+        DifficultyWalking: getRadioValue('difficulty-walking'),
+        SmokerStatus: document.getElementById('smoker').value,
+        AgeCategory: convertAgeToCategory(age),
+        Weight: parseInt(document.getElementById('input-weight').querySelector('input').value,10),
+        Height: parseInt(document.getElementById('input-height').querySelector('input').value, 10),
+        AlcoholDrinkers: getRadioValue('alcohol-drinkers')
     };
 
     for (var key in formData) {
@@ -91,12 +93,7 @@ function submitForm(event) {
         }
     }
 
-    // Convert the JavaScript object to a JSON string
-    var jsonData = JSON.stringify(formData);
-
-    console.log('Form Data (JSON):', jsonData);
-
-    Req(jsonData);
+    Req(formData);
 }
 
 function getRadioValue(name) {
@@ -153,18 +150,18 @@ function loadPagePersonal() {
             <div id="input-sex">
                 <div class="label-input">Sex</div>
                 <div>
-                    <input class="form-check-input mt-1" type="radio" value="male" name="sex" required>
+                    <input class="form-check-input mt-1" type="radio" value="Male" name="sex" required>
                     <label for="male">Male</label>
-                    <input class="form-check-input mt-1" type="radio" value="female" name="sex" required>
+                    <input class="form-check-input mt-1" type="radio" value="Female" name="sex" required>
                     <label for="female">Female</label>
                 </div>
             </div>
             <div id="input-physical-activities">
                 <div class="label-input">Physical Activities</div>
                 <div>
-                    <input class="form-check-input mt-1" type="radio" value="yes" name="physical-activities" required>
+                    <input class="form-check-input mt-1" type="radio" value="Yes" name="physical-activities" required>
                     <label for="yes">Yes</label>
-                    <input class="form-check-input mt-1" type="radio" value="no" name="physical-activities" required>
+                    <input class="form-check-input mt-1" type="radio" value="No" name="physical-activities" required>
                     <label for="no">No</label>
                 </div>
 
@@ -172,10 +169,10 @@ function loadPagePersonal() {
             <div id="input-difficulty-walking">
                 <div class="label-input">Difficulty Walking</div>
                 <div>
-                    <input class="form-check-input mt-1" id="yes-walking" type="radio" value="yes"
+                    <input class="form-check-input mt-1" id="yes-walking" type="radio" value="Yes"
                         name="difficulty-walking" required>
                     <label for="yes">Yes</label>
-                    <input class="form-check-input mt-1" id="no-walking" type="radio" value="no"
+                    <input class="form-check-input mt-1" id="no-walking" type="radio" value="No"
                         name="difficulty-walking" required>
                     <label for="no">No</label>
                 </div>
@@ -183,10 +180,10 @@ function loadPagePersonal() {
             <div id="input-alcohol-drinkers">
                 <div class="label-input">Alcohol Drinkers</div>
                 <div>
-                    <input class="form-check-input mt-1" id="yes-drinkers" type="radio" value="yes"
+                    <input class="form-check-input mt-1" id="yes-drinkers" type="radio" value="Yes"
                         name="alcohol-drinkers" required>
                     <label for="yes">Yes</label>
-                    <input class="form-check-input mt-1" id="no-drinkers" type="radio" value="no"
+                    <input class="form-check-input mt-1" id="no-drinkers" type="radio" value="No"
                         name="alcohol-drinkers" required>
                     <label for="no">No</label>
                 </div>
@@ -379,6 +376,33 @@ function formatSize(bytes) {
     if (bytes === 0) return '0 Byte';
     const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
     return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+}
+
+function convertAgeToCategory(age) {
+    const ageRanges = {
+        'Age 65 to 69': [65, 69],
+        'Age 70 to 74': [70, 74],
+        'Age 75 to 79': [75, 79],
+        'Age 80 or older': [80, Infinity],
+        'Age 50 to 54': [50, 54],
+        'Age 40 to 44': [40, 44],
+        'Age 60 to 64': [60, 64],
+        'Age 55 to 59': [55, 59],
+        'Age 45 to 49': [45, 49],
+        'Age 35 to 39': [35, 39],
+        'Age 25 to 29': [25, 29],
+        'Age 30 to 34': [30, 34],
+        'Age 18 to 24': [0, 24]
+    };
+
+    for (const [category, range] of Object.entries(ageRanges)) {
+        if (age >= range[0] && age <= range[1]) {
+            return category;
+        }
+    }
+
+    // If the age does not fall into any specified range, you may handle it according to your requirements.
+    return null;
 }
 
 window.onload = loadPagePersonal
