@@ -48,6 +48,7 @@ function ReqFile(requestData) {
         handleCSVData(data);
     }).catch(error => {
         console.error('Fetch error:', error);
+        alert('Fetch error:', error);
     });
 }
 
@@ -117,35 +118,20 @@ function loadPageDoctor() {
     const newContent = document.createElement('div');
     newContent.id = 'content';
 
-
     // Create form element
     var form = document.createElement('form');
-    form.id = 'uploadForm';
+    form.id = 'myForm';
     form.enctype = 'multipart/form-data';
 
-    // Create label element
-    var label = document.createElement('label');
-    label.setAttribute('for', 'fileInput');
-    label.textContent = 'Choose a file:';
-
-    // Create input element for file upload
-    var fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.id = 'fileInput';
-    fileInput.name = 'fileInput';
-    fileInput.accept = '.jpg, .jpeg, .png';
-
-    // Create button element
-    var uploadButton = document.createElement('button');
-    uploadButton.type = 'button';
-    uploadButton.textContent = 'Upload';
-    uploadButton.onclick = uploadFile; // Assign the function to the button click event
-
-    // Append elements to the form
-    form.appendChild(label);
-    form.appendChild(fileInput);
-    form.appendChild(uploadButton);
-
+    form.innerHTML = `
+    <div id="drop-area" ondrop="dropHandler(event)" ondragover="dragOverHandler(event)" ondragenter="dragEnterHandler(event)" ondragleave="dragLeaveHandler(event)" onclick="selectFile()">
+        <p>Drag and drop a file here <br> or <br>click to select</p>
+    </div>
+    <input type="file" id="fileInput" onchange="handleFiles(this.files)" multiple>
+    <div id="button-upload">
+        <button class="btn btn-primary" type="button" onclick="uploadFile()">Upload</button>
+    </div>
+    `
     newContent.append(form);
     document.getElementById('container').appendChild(newContent);
 }
@@ -156,133 +142,104 @@ function loadPagePersonal() {
     const newContent = document.createElement('div');
     newContent.id = 'content';
 
-    // Create form element
     var form = document.createElement('form');
-    form.id = 'myForm';
-    form.addEventListener('submit', submitForm);
+    form.setAttribute('id', 'myForm');
+    form.setAttribute('onsubmit', 'submitForm(event)');
+    form.setAttribute('class','was-validated')
 
-    // Create Sex input
-    var inputSex = document.createElement('div');
-    inputSex.id = 'input-sex';
-    inputSex.innerHTML = `
-        <div>Sex</div>
-        <label for="male">Male</label>
-        <input type="radio" id="male" name="sex" value="male">
+    form.innerHTML = `
+    <div id="container-form">
+        <div id="binary-form">
+            <div id="input-sex">
+                <div class="label-input">Sex</div>
+                <div>
+                    <input class="form-check-input mt-1" type="radio" value="male" name="sex" required>
+                    <label for="male">Male</label>
+                    <input class="form-check-input mt-1" type="radio" value="female" name="sex" required>
+                    <label for="female">Female</label>
+                </div>
+            </div>
+            <div id="input-physical-activities">
+                <div class="label-input">Physical Activities</div>
+                <div>
+                    <input class="form-check-input mt-1" type="radio" value="yes" name="physical-activities" required>
+                    <label for="yes">Yes</label>
+                    <input class="form-check-input mt-1" type="radio" value="no" name="physical-activities" required>
+                    <label for="no">No</label>
+                </div>
 
-        <label for="female">Female</label>
-        <input type="radio" id="female" name="sex" value="female">
-    `;
-    form.appendChild(inputSex);
-
-    // Create General Health input
-    var inputGeneralHealth = document.createElement('div');
-    inputGeneralHealth.id = 'input-general-health';
-    inputGeneralHealth.innerHTML = `
-        <div>General Health</div>
-        <select id="general-health" name="general-health">
-            <option value="Poor">Poor</option>
-            <option value="Excellent">Excellent</option>
-            <option value="Good">Good</option>
-            <option value="Fair">Fair</option>
-            <option value="Very good">Very good</option>
-        </select>
-    `;
-    form.appendChild(inputGeneralHealth);
-
-    // Create Physical Activities input
-    var inputPhysicalActivities = document.createElement('div');
-    inputPhysicalActivities.id = 'input-physical-activities';
-    inputPhysicalActivities.innerHTML = `
-        <div>Physical Activities</div>
-        <label for="yes-activities">Yes</label>
-        <input type="radio" id="yes-activities" name="physical-activities" value="yes">
-
-        <label for="no-activities">No</label>
-        <input type="radio" id="no-activities" name="physical-activities" value="no">
-    `;
-    form.appendChild(inputPhysicalActivities);
-
-    // Create Sleep Hours input
-    var inputSleepHours = document.createElement('div');
-    inputSleepHours.id = 'input-sleep-hours';
-    inputSleepHours.innerHTML = `
-        <div>Sleep Hours</div>
-        <input type="number">
-    `;
-    form.appendChild(inputSleepHours);
-
-    var inputDifficultyWalking = document.createElement('div');
-    inputDifficultyWalking.id = 'input-difficulty-walking';
-    inputDifficultyWalking.innerHTML = `
-                <div>Difficulty Walking</div>
-                <label for="yes-walking">Yes</label>
-                <input type="radio" id="yes-walking" name="difficulty-walking" value="yes">
-        
-                <label for="no-walking">No</label>
-                <input type="radio" id="no-walking" name="difficulty-walking" value="no">
-            `;
-    form.appendChild(inputDifficultyWalking);
-
-    // Create Smoker Status input
-    var inputSmokerStatus = document.createElement('div');
-    inputSmokerStatus.id = 'input-smoker-status';
-    inputSmokerStatus.innerHTML = `
-                <div>Smoker Status</div>
-                <select id="smoker" name="smoker">
+            </div>
+            <div id="input-difficulty-walking">
+                <div class="label-input">Difficulty Walking</div>
+                <div>
+                    <input class="form-check-input mt-1" id="yes-walking" type="radio" value="yes"
+                        name="difficulty-walking" required>
+                    <label for="yes">Yes</label>
+                    <input class="form-check-input mt-1" id="no-walking" type="radio" value="no"
+                        name="difficulty-walking" required>
+                    <label for="no">No</label>
+                </div>
+            </div>
+            <div id="input-alcohol-drinkers">
+                <div class="label-input">Alcohol Drinkers</div>
+                <div>
+                    <input class="form-check-input mt-1" id="yes-drinkers" type="radio" value="yes"
+                        name="alcohol-drinkers" required>
+                    <label for="yes">Yes</label>
+                    <input class="form-check-input mt-1" id="no-drinkers" type="radio" value="no"
+                        name="alcohol-drinkers" required>
+                    <label for="no">No</label>
+                </div>
+            </div>
+        </div>
+        <div id="category-form">
+            <div class="col-md-5" id="input-general-health">
+                <label for="validationCustom04" class="form-label label-input">General health</label>
+                <select class="form-select" id="general-health" name="general-health" required>
+                    <option value="Poor">Poor</option>
+                    <option value="Excellent">Excellent</option>
+                    <option value="Good">Good</option>
+                    <option value="Fair">Fair</option>
+                    <option value="Very good">Very good</option>
+                </select>
+            </div>
+            <div class="col-md-5" id="input-smoker-status">
+                <label for="validationCustom04" class="form-label label-input">Smoker Status</label>
+                <select class="form-select" id="smoker" name="smoker" required>
                     <option value="Former smoker">Former smoker</option>
                     <option value="Never smoked">Never smoked</option>
-                    <option value="Current smoker - now smokes every day">Current smoker - now smokes every day</option>
+                    <option value="Current smoker - now smokes every day">Current smoker - now smokes every day
+                    </option>
                 </select>
-            `;
-    form.appendChild(inputSmokerStatus);
-
-    // Create Age input
-    var inputAge = document.createElement('div');
-    inputAge.id = 'input-age';
-    inputAge.innerHTML = `
-                <div>Age</div>
-                <input type="number">
-            `;
-    form.appendChild(inputAge);
-
-    // Create Weight input
-    var inputWeight = document.createElement('div');
-    inputWeight.id = 'input-weight';
-    inputWeight.innerHTML = `
-                <div>Weight(Kg)</div>
-                <input type="number">
-            `;
-    form.appendChild(inputWeight);
-
-    // Create Height input
-    var inputHeight = document.createElement('div');
-    inputHeight.id = 'input-height';
-    inputHeight.innerHTML = `
-                <div>Height(Cm)</div>
-                <input type="number">
-            `;
-    form.appendChild(inputHeight);
-
-    // Create Alcohol Drinkers input
-    var inputAlcoholDrinkers = document.createElement('div');
-    inputAlcoholDrinkers.id = 'input-alcohol-drinkers';
-    inputAlcoholDrinkers.innerHTML = `
-                <div>Alcohol Drinkers</div>
-                <label for="yes-drinkers">Yes</label>
-                <input type="radio" id="yes-drinkers" name="alcohol-drinkers" value="yes">
-        
-                <label for="no-drinkers">No</label>
-                <input type="radio" id="no-drinkers" name="alcohol-drinkers" value="no">
-            `;
-    form.appendChild(inputAlcoholDrinkers);
-
-    // Repeat the process for the remaining input elements...
-
-    // Create Submit button
-    var submitButton = document.createElement('button');
-    submitButton.type = 'submit';
-    submitButton.textContent = 'Submit';
-    form.appendChild(submitButton);
+            </div>
+        </div>
+        <div id="numerical-form">
+            <div class="inside-numerical-form">
+                <div class="col-md-5" id="input-sleep-hours">
+                    <label for="validationCustom03" class="form-label label-input">Sleep Hours</label>
+                    <input type="number" class="form-control" id="input-sleep-hours" min="0" required>
+                </div>
+                <div class="col-md-5" id="input-age">
+                    <label for="validationCustom03" class="form-label label-input">Age</label>
+                    <input type="number" class="form-control" id="input-age" min="0" required>
+                </div>
+            </div>
+            <div class="inside-numerical-form">
+                <div class="col-md-5" id="input-weight">
+                    <label for="validationCustom03" class="form-label label-input">Weight(Kg)</label>
+                    <input type="number" class="form-control" id="input-weight" min="0" required>
+                </div>
+                <div class="col-md-5" id="input-height">
+                    <label for="validationCustom03" class="form-label label-input">Height(Cm)</label>
+                    <input type="number" class="form-control" id="input-height" min="0" required>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="button">
+        <button class="btn btn-primary mt-2" type="submit">Submit</button>
+    </div>
+    `
 
     newContent.append(form);
     document.getElementById('container').appendChild(newContent);
@@ -300,3 +257,128 @@ function uploadFile() {
         alert('Please choose a file to upload.');
     }
 }
+
+function createRadioInput(parentNode, name, value, label) {
+    var radioInput = document.createElement('input');
+    radioInput.setAttribute('type', 'radio');
+    radioInput.setAttribute('value', value);
+    radioInput.setAttribute('name', name);
+    radioInput.setAttribute('class', 'form-check-input mt-1');
+
+    var labelElement = document.createElement('label');
+    labelElement.setAttribute('for', value);
+    labelElement.textContent = label;
+
+    parentNode.appendChild(radioInput);
+    parentNode.appendChild(labelElement);
+}
+
+// Function to create select input elements
+function createSelectInput(id, name, options) {
+    var selectInput = document.createElement('select');
+    selectInput.setAttribute('class', 'form-select');
+    selectInput.setAttribute('id', id);
+    selectInput.setAttribute('name', name);
+    selectInput.setAttribute('required', 'true');
+
+    for (var i = 0; i < options.length; i++) {
+        var option = document.createElement('option');
+        option.setAttribute('value', options[i]);
+        option.textContent = options[i];
+        selectInput.appendChild(option);
+    }
+
+    return selectInput;
+}
+
+// Function to create numerical input elements
+function createNumericalInput(type, id, label) {
+    var inputElement = document.createElement('input');
+    inputElement.setAttribute('type', type);
+    inputElement.setAttribute('class', 'form-control');
+    inputElement.setAttribute('id', id);
+    inputElement.setAttribute('required', 'true');
+
+    var labelElement = document.createElement('label');
+    labelElement.setAttribute('for', id);
+    labelElement.setAttribute('class', 'form-label');
+    labelElement.textContent = label;
+
+    var divContainer = document.createElement('div');
+    divContainer.setAttribute('class', 'col-md-5');
+    divContainer.appendChild(labelElement);
+    divContainer.appendChild(inputElement);
+
+    return divContainer;
+}
+
+function createDivBinary(label, id, value1, label1, value2, label2){
+    input = document.createElement('div');
+    input.id = 'input-'+id;
+    var inner = document.createElement('div');
+    inner.innerText = label;
+    input.appendChild(inner);
+    var tmpDiv = document.createElement('div');
+    createRadioInput(tmpDiv, id, value1, label1);
+    createRadioInput(tmpDiv, id, value2, label2);
+    input.append(tmpDiv);
+
+    return input;
+}
+
+function dragOverHandler(event) {
+    event.preventDefault();
+    document.getElementById('drop-area').classList.add('highlight');
+}
+
+function dragEnterHandler(event) {
+    event.preventDefault();
+    document.getElementById('drop-area').classList.add('highlight');
+}
+
+function dragLeaveHandler(event) {
+    event.preventDefault();
+    document.getElementById('drop-area').classList.remove('highlight');
+}
+
+function dropHandler(event) {
+    event.preventDefault();
+    document.getElementById('drop-area').classList.remove('highlight');
+
+    const files = event.dataTransfer.files;
+    handleFiles(files);
+}
+
+function selectFile() {
+    document.getElementById('fileInput').click();
+}
+
+function handleFiles(files) {
+    const output = document.getElementById('drop-area');
+    output.innerHTML = '';
+
+    for (const file of files) {
+    output.innerHTML += `<p>${file.name} (${formatSize(file.size)})</p>`;
+    readFile(file);
+    }
+}
+
+function readFile(file) {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+    // The file content is available here as e.target.result
+    console.log('File content:', e.target.result);
+    };
+
+    reader.readAsText(file);
+}
+
+function formatSize(bytes) {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes === 0) return '0 Byte';
+    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+}
+
+window.onload = loadPagePersonal
