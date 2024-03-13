@@ -5,6 +5,13 @@ body, html{
     color: white !important;
 }
 
+#topic{
+    font-size: xx-large;
+    font-weight: bold;
+    padding: 20px 0px 0px;
+    text-align: center;
+}
+
 #container{
     display: flex;
     width: 100%;
