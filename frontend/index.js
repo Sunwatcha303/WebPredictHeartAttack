@@ -40,8 +40,11 @@ function ReqFile(requestData) {
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        return response.json();
+        return response.text();
     }).then(data => {
+        // Hide loading indicator
+        document.getElementById('loadingOverlay').style.display = 'none';
+
         // Handle the API response here
         console.log('API response:', data);
         if(data === null){
@@ -52,6 +55,8 @@ function ReqFile(requestData) {
     }).catch(error => {
         console.error('Fetch error:', error);
         alert('Fetch error:', error);
+        // Hide loading indicator in case of an error
+        document.getElementById('loadingOverlay').style.display = 'none';
     });
 }
 
@@ -250,6 +255,9 @@ function uploadFile() {
     var file = fileInput.files[0];
 
     if (file) {
+        // Show loading indicator
+        document.getElementById('loadingOverlay').style.display = 'block';
+
         // Your file upload logic here
         ReqFile(file);
         console.log(file);
@@ -411,7 +419,7 @@ function convertAgeToCategory(age) {
 function handleResponse(jsonData) {
     var data = JSON.parse(jsonData.result);
     var value = parseInt(data[0]);
-    var result = (value===1)? 'You have a chance of having heart attack.' : 'You don\'t have heart attack.'
+    var result = (value===1)? 'You have a chance of having heart attack.' : 'You are not having a heart attack.'
 
     console.log(result);
     showMessage(result);
