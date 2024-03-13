@@ -45,7 +45,7 @@ function ReqFile(requestData) {
         // Handle the API response here
         console.log('API response:', data);
         if(data === null){
-            alert("error data is null")
+            alert("error response is null")
             return;
         }
         handleCSVData(data);
@@ -127,7 +127,7 @@ function loadPageDoctor() {
     <div id="drop-area" ondrop="dropHandler(event)" ondragover="dragOverHandler(event)" ondragenter="dragEnterHandler(event)" ondragleave="dragLeaveHandler(event)" onclick="selectFile()">
         <p>Drag and drop a file here <br> or <br>click to select</p>
     </div>
-    <input type="file" id="fileInput" onchange="handleFiles(this.files)" multiple>
+    <input type="file" id="fileInput" onchange="handleFiles(this.files)" accept=".csv" multiple>
     <div id="button-upload">
         <button class="btn btn-primary" type="button" onclick="uploadFile()">Upload</button>
     </div>
