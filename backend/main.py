@@ -111,7 +111,8 @@ def __preprocess_data(data_pre):
 @app.post("/predict", response_model=dict, status_code=200)
 async def predict(data: UserData):
     input_df = pd.DataFrame([data],columns=['Sex','GeneralHealth','PhysicalActivities','SleepHours','DifficultyWalking','SmokerStatus','AgeCategory','Weight','Height','AlcoholDrinkers'])
-    pre_input = __changeformat(input_df)
+    useinput = input_df.copy()
+    pre_input = __changeformat(useinput)
     X = __preprocess_data(pre_input)
     pred = model.predict(X)
     print(pred)
@@ -124,7 +125,8 @@ async def predict(file: UploadFile = File(...)):
         return {"error": "Uploaded file is not a CSV."}
     # Read the uploaded CSV file into a DataFrame
     input_df = pd.read_csv(file.file)
-    X = __preprocess_data(input_df)
+    useinput = input_df.copy()
+    X = __preprocess_data(useinput)
     pred = model.predict(X)
     input_df['HadHeartAttack'] = pd.Series(pred).map({0: 'No', 1: 'Yes'})
     return Response(content=input_df.to_csv(index=False), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=result.csv"})
