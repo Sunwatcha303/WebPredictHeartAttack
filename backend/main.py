@@ -1,9 +1,9 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException , File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from sklearn.preprocessing import LabelEncoder,OneHotEncoder
 import pandas as pd
 import joblib
+import csv
 
 app = FastAPI()
 
@@ -114,8 +114,23 @@ async def predict(data: UserData):
     return {"result": f'{pred}'}
 
 @app.post("/predict_csv")
-async def predict():
-    pass
+async def predict(file: UploadFile = File(...)):
+    # Check if the uploaded file is a CSV
+    if file.filename.endswith(".csv"):
+        # Read the contents of the CSV file
+        contents = await file.read()
+        
+        # Process the CSV file
+        rows = []
+        with open(file.filename, "r") as csv_file:
+            csv_reader = csv.reader(csv_file)
+            for row in csv_reader:
+                rows.append(row)
+        
+        # Here you can do further processing with the rows
+        return {"file_name": file.filename, "rows": rows}
+    else:
+        return {"error": "Uploaded file is not a CSV."}
 
 if __name__ == '__main__':
     import uvicorn
