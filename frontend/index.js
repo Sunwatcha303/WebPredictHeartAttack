@@ -73,6 +73,14 @@ function handleCSVData(csvData) {
     a.click();
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
+
+    // Clear the drop area
+    clearDropArea();
+}
+
+function clearDropArea() {
+    const dropArea = document.getElementById('drop-area');
+    dropArea.innerHTML = `<p>Drag and drop a file here <br> or <br>click to select</p>`;
 }
 
 function submitForm(event) {
