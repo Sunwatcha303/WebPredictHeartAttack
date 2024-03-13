@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
 import joblib
+from starlette.responses import Response
 import csv
 
 app = FastAPI()
@@ -22,7 +23,7 @@ async def get_health():
             "message"   : "Good",
         }
 
-model = joblib.load('model.joblib')
+model = joblib.load('backend/model.joblib')
 
 class UserData(BaseModel):
     Sex: str
@@ -36,12 +37,14 @@ class UserData(BaseModel):
     Height: float
     AlcoholDrinkers: str
 
-def __preprocess_data(data_df):
-    # Data preprocess
+def __changeformat(data_df):
     data_pre = pd.DataFrame()
     for column in data_df.columns:
         data_pre[column.split(',')[0].strip()] = data_df[column].apply(lambda x: x[1])
+    return data_pre
 
+def __preprocess_data(data_pre):
+    # Data preprocess
     sex_order = ['Female','Male']
     data_pre['Sex'] = pd.Categorical(data_pre['Sex'], categories=sex_order, ordered=True)
     data_pre['Sex'] = data_pre['Sex'].cat.codes
@@ -108,7 +111,8 @@ def __preprocess_data(data_df):
 @app.post("/predict", response_model=dict, status_code=200)
 async def predict(data: UserData):
     input_df = pd.DataFrame([data],columns=['Sex','GeneralHealth','PhysicalActivities','SleepHours','DifficultyWalking','SmokerStatus','AgeCategory','Weight','Height','AlcoholDrinkers'])
-    X = __preprocess_data(input_df)
+    pre_input = __changeformat(input_df)
+    X = __preprocess_data(pre_input)
     pred = model.predict(X)
     print(pred)
     return {"result": f'{pred}'}
@@ -116,21 +120,14 @@ async def predict(data: UserData):
 @app.post("/predict_csv")
 async def predict(file: UploadFile = File(...)):
     # Check if the uploaded file is a CSV
-    if file.filename.endswith(".csv"):
-        # Read the contents of the CSV file
-        contents = await file.read()
-        
-        # Process the CSV file
-        rows = []
-        with open(file.filename, "r") as csv_file:
-            csv_reader = csv.reader(csv_file)
-            for row in csv_reader:
-                rows.append(row)
-        
-        # Here you can do further processing with the rows
-        return {"file_name": file.filename, "rows": rows}
-    else:
+    if not file.filename.endswith(".csv"):
         return {"error": "Uploaded file is not a CSV."}
+    # Read the uploaded CSV file into a DataFrame
+    input_df = pd.read_csv(file.file)
+    X = __preprocess_data(input_df)
+    pred = model.predict(X)
+    input_df['HadHeartAttack'] = pd.Series(pred).map({0: 'No', 1: 'Yes'})
+    return Response(content=input_df.to_csv(index=False), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=result.csv"})
 
 if __name__ == '__main__':
     import uvicorn
