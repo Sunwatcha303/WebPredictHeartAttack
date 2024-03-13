@@ -22,7 +22,7 @@ async def get_health():
             "message"   : "Good",
         }
 
-model = joblib.load('backend/model.joblib')
+model = joblib.load('model.joblib')
 
 class UserData(BaseModel):
     Sex: str
@@ -108,8 +108,6 @@ def __preprocess_data(data_df):
 @app.post("/predict", response_model=dict, status_code=200)
 async def predict(data: UserData):
     input_df = pd.DataFrame([data],columns=['Sex','GeneralHealth','PhysicalActivities','SleepHours','DifficultyWalking','SmokerStatus','AgeCategory','Weight','Height','AlcoholDrinkers'])
-    print(input_df)
-    print(input_df['Weight'])
     X = __preprocess_data(input_df)
     pred = model.predict(X)
     print(pred)

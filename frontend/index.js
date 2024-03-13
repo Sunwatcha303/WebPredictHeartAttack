@@ -411,7 +411,7 @@ function convertAgeToCategory(age) {
 function handleResponse(jsonData) {
     var data = JSON.parse(jsonData.result);
     var value = parseInt(data[0]);
-    var result = (value===0)? 'You have a chance of having heart attack.' : 'You don\'t have heart attack.'
+    var result = (value===1)? 'You have a chance of having heart attack.' : 'You don\'t have heart attack.'
 
     console.log(result);
     showMessage(result);
