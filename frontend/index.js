@@ -15,7 +15,7 @@ function Req(requestData) {
         }
         return response.json();
     }).then(data => {
-        console.log(data)
+        handleResponse(data);
     }).catch(error => {
         console.error('Fetch error:', error);
     });
@@ -44,6 +44,10 @@ function ReqFile(requestData) {
     }).then(data => {
         // Handle the API response here
         console.log('API response:', data);
+        if(data === null){
+            alert("error data is null")
+            return;
+        }
         handleCSVData(data);
     }).catch(error => {
         console.error('Fetch error:', error);
@@ -76,11 +80,11 @@ function submitForm(event) {
         Sex: getRadioValue('sex'),
         GeneralHealth: document.getElementById('general-health').value,
         PhysicalActivities: getRadioValue('physical-activities'),
-        SleepHours: parseInt(document.getElementById('input-sleep-hours').querySelector('input').value,10),
+        SleepHours: parseInt(document.getElementById('input-sleep-hours').querySelector('input').value, 10),
         DifficultyWalking: getRadioValue('difficulty-walking'),
         SmokerStatus: document.getElementById('smoker').value,
         AgeCategory: convertAgeToCategory(age),
-        Weight: parseInt(document.getElementById('input-weight').querySelector('input').value,10),
+        Weight: parseInt(document.getElementById('input-weight').querySelector('input').value, 10),
         Height: parseInt(document.getElementById('input-height').querySelector('input').value, 10),
         AlcoholDrinkers: getRadioValue('alcohol-drinkers')
     };
@@ -141,7 +145,7 @@ function loadPagePersonal() {
     var form = document.createElement('form');
     form.setAttribute('id', 'myForm');
     form.setAttribute('onsubmit', 'submitForm(event)');
-    form.setAttribute('class','was-validated')
+    form.setAttribute('class', 'was-validated')
 
     form.innerHTML = `
     <div id="container-form">
@@ -193,19 +197,19 @@ function loadPagePersonal() {
                 <label for="validationCustom04" class="form-label label-input">General health</label>
                 <select class="form-select" id="general-health" name="general-health" required>
                     <option value="Poor">Poor</option>
-                    <option value="Excellent">Excellent</option>
-                    <option value="Good">Good</option>
                     <option value="Fair">Fair</option>
+                    <option value="Good">Good</option>
                     <option value="Very good">Very good</option>
+                    <option value="Excellent">Excellent</option>
                 </select>
             </div>
             <div class="col-md-5" id="input-smoker-status">
                 <label for="validationCustom04" class="form-label label-input">Smoker Status</label>
                 <select class="form-select" id="smoker" name="smoker" required>
+                <option value="Never smoked">Never smoked</option>
                     <option value="Former smoker">Former smoker</option>
-                    <option value="Never smoked">Never smoked</option>
-                    <option value="Current smoker - now smokes every day">Current smoker - now smokes every day
-                    </option>
+                    <option value="Current smoker - now smokes some days">Current smoker - now smokes some days</option>
+                    <option value="Current smoker - now smokes every day">Current smoker - now smokes every day</option>
                 </select>
             </div>
         </div>
@@ -308,9 +312,9 @@ function createNumericalInput(type, id, label) {
     return divContainer;
 }
 
-function createDivBinary(label, id, value1, label1, value2, label2){
+function createDivBinary(label, id, value1, label1, value2, label2) {
     input = document.createElement('div');
-    input.id = 'input-'+id;
+    input.id = 'input-' + id;
     var inner = document.createElement('div');
     inner.innerText = label;
     input.appendChild(inner);
@@ -354,8 +358,8 @@ function handleFiles(files) {
     output.innerHTML = '';
 
     for (const file of files) {
-    output.innerHTML += `<p>${file.name} (${formatSize(file.size)})</p>`;
-    readFile(file);
+        output.innerHTML += `<p>${file.name} (${formatSize(file.size)})</p>`;
+        readFile(file);
     }
 }
 
@@ -363,8 +367,8 @@ function readFile(file) {
     const reader = new FileReader();
 
     reader.onload = function (e) {
-    // The file content is available here as e.target.result
-    console.log('File content:', e.target.result);
+        // The file content is available here as e.target.result
+        console.log('File content:', e.target.result);
     };
 
     reader.readAsText(file);
@@ -402,6 +406,27 @@ function convertAgeToCategory(age) {
 
     // If the age does not fall into any specified range, you may handle it according to your requirements.
     return null;
+}
+
+function handleResponse(jsonData) {
+    var data = JSON.parse(jsonData.result);
+    var value = parseInt(data[0]);
+    var result = (value===0)? 'You have a chance of having heart attack.' : 'You don\'t have heart attack.'
+
+    console.log(result);
+    showMessage(result);
+}
+
+function showMessage(message) {
+    var centerMessage = document.getElementById("centerMessage");
+    var messageContent = document.getElementById("messageContent");
+    messageContent.innerHTML = message;
+    centerMessage.style.display = "block"; // Show the message
+}
+
+// Function to hide the message
+function hideMessage() {
+    document.getElementById("centerMessage").style.display = "none";
 }
 
 window.onload = loadPagePersonal
