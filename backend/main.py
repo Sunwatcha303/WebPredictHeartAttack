@@ -1,10 +1,10 @@
 from fastapi import FastAPI, HTTPException , File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from starlette.responses import Response
 import pandas as pd
 import joblib
-from starlette.responses import Response
-import csv
+import sys
 
 app = FastAPI()
 
@@ -23,7 +23,18 @@ async def get_health():
             "message"   : "Good",
         }
 
-model = joblib.load('backend/model.joblib')
+
+try:
+    model = joblib.load('backend/model.joblib')
+except FileNotFoundError:
+    print("Error: Model file not found.")
+    sys.exit(1)
+
+try:
+    scaler = joblib.load('backend/scaler.joblib')
+except FileNotFoundError:
+    print("Error: Model file not found.")
+    sys.exit(1)
 
 class UserData(BaseModel):
     Sex: str
@@ -45,6 +56,7 @@ def __changeformat(data_df):
 
 def __preprocess_data(data_pre):
     # Data preprocess
+    #LabelEncoder
     sex_order = ['Female','Male']
     data_pre['Sex'] = pd.Categorical(data_pre['Sex'], categories=sex_order, ordered=True)
     data_pre['Sex'] = data_pre['Sex'].cat.codes
@@ -59,6 +71,7 @@ def __preprocess_data(data_pre):
     data_pre['GeneralHealth'] = pd.Categorical(data_pre['GeneralHealth'], categories=health_order, ordered=True)
     data_pre['GeneralHealth'] = data_pre['GeneralHealth'].cat.codes
 
+    #One Hot Encoder
     age_categories = ['Age 65 to 69', 'Age 70 to 74', 'Age 75 to 79', 'Age 80 or older',
                       'Age 50 to 54', 'Age 40 to 44', 'Age 60 to 64', 'Age 55 to 59',
                       'Age 45 to 49', 'Age 35 to 39', 'Age 25 to 29', 'Age 30 to 34', 'Age 18 to 24']
@@ -85,6 +98,13 @@ def __preprocess_data(data_pre):
     # BMI = WEIGHT(KG) / (HEIGHT)(M^2)
     data_pre['BMI'] = (data_pre['Weight'] / ((data_pre['Height'] / 100) ** 2)).round(2)
     data_pre.drop(['Weight', 'Height'], axis=1, inplace=True)
+
+    #MaxMinScaler
+    numeric_cols = ['SleepHours','BMI']
+    data_to_scale = data_pre[numeric_cols]
+    scaled_data = scaler.fit_transform(data_to_scale)
+
+    data_pre[numeric_cols] = scaled_data
 
     # Reposition
     new_column_order = [

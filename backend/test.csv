@@ -1,9 +1,9 @@
-Sex,GeneralHealth,PhysicalActivities,SleepHours,DifficultyWalking,SmokerStatus,Age,AlcoholDrinkers,Weight,Height
-Female,Very good,Yes,9,No,Former smoker,69,No,65,165
-Male,Very good,Yes,6,No,Former smoker,74,No,75,175
-Male,Very good,No,8,No,Former smoker,79,Yes,80,180
-Female,Fair,Yes,9,No,Never smoked,80,No,60,160
-Female,Good,Yes,5,No,Never smoked,80,No,70,170
-Male,Good,Yes,7,No,Never smoked,54,Yes,85,185
-Female,Good,Yes,8,No,Never smoked,80,No,63,163
-Male,Fair,Yes,8,Yes,Never smoked,79,No,78,178
+Sex,GeneralHealth,PhysicalActivities,SleepHours,DifficultyWalking,SmokerStatus,AgeCategory,AlcoholDrinkers,Weight,Height
+Female,Very good,Yes,9,No,Former smoker,Age 65 to 69,No,65,165
+Male,Very good,Yes,6,No,Former smoker,Age 70 to 74,No,75,175
+Male,Very good,No,8,No,Former smoker,Age 75 to 79,Yes,80,180
+Female,Fair,Yes,9,No,Never smoked,Age 80 or older,No,60,160
+Female,Good,Yes,5,No,Never smoked,Age 80 or older,No,70,170
+Male,Good,Yes,7,No,Never smoked,Age 50 to 54,Yes,85,185
+Female,Good,Yes,8,No,Never smoked,Age 80 or older,No,63,163
+Male,Fair,Yes,8,Yes,Never smoked,Age 75 to 79,No,78,178
