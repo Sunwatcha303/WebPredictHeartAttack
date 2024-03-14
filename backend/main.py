@@ -142,7 +142,7 @@ async def predict(data: UserData):
 async def predict(file: UploadFile = File(...)):
     # Check if the uploaded file is a CSV
     if not file.filename.endswith(".csv"):
-        return {"error": "Uploaded file is not a CSV."}
+        return {"error": "Uploaded file is not a CSV."} , 400
     # Read the uploaded CSV file into a DataFrame
     input_df = pd.read_csv(file.file)
     useinput = input_df.copy()
