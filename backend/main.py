@@ -149,7 +149,7 @@ async def predict(file: UploadFile = File(...)):
     X = __preprocess_data(useinput)
     pred = model.predict(X)
     input_df['HadHeartAttack'] = pd.Series(pred).map({0: 'No', 1: 'Yes'})
-    return Response(content=input_df.to_csv(index=False), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=result.csv"}) , 200
+    return Response(content=input_df.to_csv(index=False), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=result.csv"})
 
 if __name__ == '__main__':
     import uvicorn
