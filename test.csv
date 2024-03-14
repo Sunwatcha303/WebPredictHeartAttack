@@ -1,0 +1,18 @@
+Sex,GeneralHealth,PhysicalActivities,SleepHours,DifficultyWalking,SmokerStatus,Age,AlcoholDrinkers,Weight,Height
+Male,Fair,Yes,8,No,Never smoked,77,No,74.84,175
+Male,Good,Yes,5,Yes,Current smoker - now smokes every day,62,No,115.67,188
+Female,Good,No,6,No,Former smoker,62,No,81.65,152
+Male,Fair,No,6,Yes,Never smoked,72,No,86.18,178
+Male,Good,No,8,No,Former smoker,77,Yes,90.72,188
+Male,Very good,Yes,8,No,Current smoker - now smokes every day,72,No,94.8,183
+Male,Good,Yes,5,No,Former smoker,67,No,123.83,185
+Female,Excellent,Yes,8,No,Current smoker - now smokes every day,62,No,50.8,152
+Female,Good,No,6,No,Never smoked,67,No,68.95,163
+Male,Fair,Yes,10,Yes,Never smoked,62,Yes,113.4,175
+Female,Fair,Yes,6,Yes,Never smoked,72,No,83.91,170
+Female,Very good,Yes,8,No,Never smoked,77,Yes,90.72,163
+Male,Good,Yes,8,No,Never smoked,67,No,95.25,178
+Female,Good,Yes,8,No,Former smoker,77,No,72.57,163
+Male,Good,Yes,10,Yes,Current smoker - now smokes every day,72,No,80.74,168
+Male,Good,Yes,6,Yes,Former smoker,85,No,106.14,183
+Female,Fair,No,8,Yes,Never smoked,85,No,61.69,152
