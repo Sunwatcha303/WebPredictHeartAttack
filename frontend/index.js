@@ -21,13 +21,13 @@ function Req(requestData) {
     });
 }
 
-function ReqFile(requestData) {
-    // Replace 'your_api_endpoint' with the actual API endpoint URL
+function ReqFile(requestData, callback) {
     const apiUrl = 'http://localhost:8888/predict_csv';
-
-    // Create a FormData object to send the file
     const formData = new FormData();
-    formData.append('file', requestData); // Assuming requestData is the CSV file
+    formData.append('file', requestData, requestData.name);
+
+    // Show loading indicator
+    document.getElementById('loadingOverlay').style.display = 'block';
 
     fetch(apiUrl, {
         method: 'POST',
@@ -42,9 +42,6 @@ function ReqFile(requestData) {
         }
         return response.text();
     }).then(data => {
-        // Hide loading indicator
-        document.getElementById('loadingOverlay').style.display = 'none';
-
         // Handle the API response here
         console.log('API response:', data);
         if(data === null){
@@ -52,11 +49,22 @@ function ReqFile(requestData) {
             return;
         }
         handleCSVData(data);
+
+        // Hide loading indicator after response is received
+        document.getElementById('loadingOverlay').style.display = 'none';
+
+        if (callback) {
+            callback();
+        }
     }).catch(error => {
-        console.error('Fetch error:', error);
-        alert('Fetch error:', error);
+        console.error('Fetch error:', 'Failed to load dataset');
+        alert('Fetch error: Failed to load dataset' );
+
         // Hide loading indicator in case of an error
         document.getElementById('loadingOverlay').style.display = 'none';
+        if (callback) {
+            callback();
+        }
     });
 }
 
@@ -68,7 +76,7 @@ function handleCSVData(csvData) {
     // Create a link element and trigger a download
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'response.csv';
+    a.download = 'result.csv';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -142,7 +150,7 @@ function loadPageDoctor() {
     </div>
     <input type="file" id="fileInput" onchange="handleFiles(this.files)" accept=".csv" multiple>
     <div id="button-upload">
-        <button class="btn btn-primary" type="button" onclick="uploadFile()">Upload</button>
+        <button class="btn btn-primary" id="uploadButton" type="button" onclick="uploadFile()">Upload</button>
     </div>
     `
     newContent.append(form);
@@ -261,17 +269,96 @@ function loadPagePersonal() {
 function uploadFile() {
     var fileInput = document.getElementById('fileInput');
     var file = fileInput.files[0];
+    var uploadButton = document.getElementById('uploadButton');
 
     if (file) {
+        // Change button text to "Uploading"
+        uploadButton.textContent = 'Uploading...';
+
         // Show loading indicator
         document.getElementById('loadingOverlay').style.display = 'block';
 
-        // Your file upload logic here
-        ReqFile(file);
-        console.log(file);
+        // Create a new FileReader instance
+        var reader = new FileReader();
+
+        // Define a callback function to be executed when the file is loaded
+        reader.onload = function(event) {
+            // Parse the CSV content
+            var csv = event.target.result;
+            var lines = csv.split('\n');
+
+            // Modify the header line
+            lines[0] = lines[0].replace('Age', 'AgeCategory');
+
+            // Loop through each line (except the header)
+            for (var i = 1; i < lines.length; i++) {
+                var columns = lines[i].split(',');
+
+                // Convert age to age category
+                var age = parseInt(columns[6]);
+                var ageCategory = getAgeCategory(age);
+                columns[6] = ageCategory;
+
+                // Reconstruct the line with modified age category
+                lines[i] = columns.join(',');
+            }
+
+            // Reconstruct the modified CSV content
+            var modifiedCSV = lines.join('\n');
+            // Call ReqFile with modified CSV content
+            var modFile = new Blob([modifiedCSV], { type: 'text/csv' });
+            modFile.name = file.name;
+            console.log(modFile);
+            console.log(file)
+            ReqFile(modFile, function () {
+                // Change predict button text back to "Upload" after upload is complete
+                uploadButton.textContent = 'Upload';
+                // Clear the uploaded file
+                clearFileInput(fileInput);
+                clearDropArea();
+            });
+        };
+
+        // Read the file as text
+        reader.readAsText(file);
     } else {
         alert('Please choose a file to upload.');
     }
+}
+
+// Function to convert age to age category
+function getAgeCategory(age) {
+    if (age >= 80) {
+        return 'Age 80 or older';
+    } else if (age >= 75 && age < 80) {
+        return 'Age 75 to 79';
+    } else if (age >= 70 && age < 75) {
+        return 'Age 70 to 74';
+    } else if (age >= 65 && age < 70) {
+        return 'Age 65 to 69';
+    } else if (age >= 60 && age < 65) {
+        return 'Age 60 to 64';
+    } else if (age >= 55 && age < 60) {
+        return 'Age 55 to 59';
+    } else if (age >= 50 && age < 55) {
+        return 'Age 50 to 54';
+    } else {
+        return 'Under 50';
+    }
+}
+
+function clearFileInput(fileInput) {
+    // Create a new file input element
+    var newFileInput = document.createElement('input');
+    newFileInput.type = 'file';
+    newFileInput.id = 'fileInput';
+    newFileInput.accept = '.csv';
+    newFileInput.onchange = function() {
+        handleFiles(this.files);
+    };
+
+    // Replace the existing file input element with the new one
+    fileInput.parentNode.replaceChild(newFileInput, fileInput);
 }
 
 function createRadioInput(parentNode, name, value, label) {
