@@ -21,7 +21,7 @@ async def get_health():
     return {
             "code"      : 200,
             "message"   : "Good",
-        }
+        } , 200
 
 
 try:
@@ -128,7 +128,7 @@ def __preprocess_data(data_pre):
 
     return data_pre
 
-@app.post("/predict", response_model=dict, status_code=200)
+@app.post("/predict")
 async def predict(data: UserData):
     input_df = pd.DataFrame([data],columns=['Sex','GeneralHealth','PhysicalActivities','SleepHours','DifficultyWalking','SmokerStatus','AgeCategory','Weight','Height','AlcoholDrinkers'])
     useinput = input_df.copy()
@@ -142,14 +142,14 @@ async def predict(data: UserData):
 async def predict(file: UploadFile = File(...)):
     # Check if the uploaded file is a CSV
     if not file.filename.endswith(".csv"):
-        return {"error": "Uploaded file is not a CSV."} , 400
+        raise HTTPException(status_code=404, detail="Uploaded file is not a CSV.")
     # Read the uploaded CSV file into a DataFrame
     input_df = pd.read_csv(file.file)
     useinput = input_df.copy()
     X = __preprocess_data(useinput)
     pred = model.predict(X)
     input_df['HadHeartAttack'] = pd.Series(pred).map({0: 'No', 1: 'Yes'})
-    return Response(content=input_df.to_csv(index=False), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=result.csv"})
+    return Response(content=input_df.to_csv(index=False), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=result.csv"}) , 200
 
 if __name__ == '__main__':
     import uvicorn
