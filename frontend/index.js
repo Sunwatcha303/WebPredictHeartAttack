@@ -146,7 +146,7 @@ function loadPageDoctor() {
 
     form.innerHTML = `
     <div id="drop-area" ondrop="dropHandler(event)" ondragover="dragOverHandler(event)" ondragenter="dragEnterHandler(event)" ondragleave="dragLeaveHandler(event)" onclick="selectFile()">
-        <p>Drag and drop a file here <br> or <br>click to select</p>
+        <p>Drag and drop a file here <br> or <br>click to select <br>(only .csv file)</p>
     </div>
     <input type="file" id="fileInput" onchange="handleFiles(this.files)" accept=".csv" multiple>
     <div id="button-upload">
