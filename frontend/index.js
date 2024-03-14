@@ -57,8 +57,8 @@ function ReqFile(requestData, callback) {
             callback();
         }
     }).catch(error => {
-        console.error('Fetch error:', 'Failed to load dataset');
-        alert('Fetch error: Failed to load dataset' );
+        console.error('Please upload file csv.');
+        alert('Please upload file csv.');
 
         // Hide loading indicator in case of an error
         document.getElementById('loadingOverlay').style.display = 'none';
