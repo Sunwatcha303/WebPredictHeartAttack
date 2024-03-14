@@ -88,7 +88,7 @@ function handleCSVData(csvData) {
 
 function clearDropArea() {
     const dropArea = document.getElementById('drop-area');
-    dropArea.innerHTML = `<p>Drag and drop a file here <br> or <br>click to select</p>`;
+    dropArea.innerHTML = `<p>Drag and drop a file here <br> or <br>click to select <br>(only .csv file)</p>`;
 }
 
 function submitForm(event) {
